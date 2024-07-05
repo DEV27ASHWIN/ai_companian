@@ -1,0 +1,174 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AI Companion</title>
+    <link rel="stylesheet" href="{% static 'style.css' %}">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+</head>
+<body>
+    <div class="chat-container">
+        <div class="chat-header">
+            <h3>AI Companion</h3>
+            <div id="darkModeToggle" class="toggle">
+                <input type="checkbox" id="darkModeSwitch">
+                <label for="darkModeSwitch"></label>
+            </div>
+        </div>
+        <div class="chat-messages" id="chat-messages">
+            <!-- Dynamic messages will be appended here -->
+        </div>
+        <div class="chat-input">
+            <input type="text" id="message-input" placeholder="Type your message here...">
+            <button id="send-button">Send</button>
+        </div>
+    </div>
+
+    <script>
+        function sendMessage(isRetry = false, botMessageElement = null) {
+            const input = document.getElementById('message-input');
+            const messagesContainer = document.getElementById('chat-messages');
+            let userMessageText = input.value.trim();
+    
+            if (isRetry && botMessageElement) {
+                userMessageText = botMessageElement.querySelector('.message-content > div').innerText;
+            }
+    
+            if (userMessageText !== "") {
+                if (!isRetry) {
+                    const userMessage = document.createElement('div');
+                    userMessage.classList.add('message', 'user-message');
+                    userMessage.innerHTML = `
+                      <img src="{% static 'user.png' %}" alt="User">
+                        <div class="message-content-user">
+                            <div>${userMessageText}</div>
+                        </div>
+                        <div class="message-actions icon">
+                            <i class="fas fa-edit" onclick="editMessage(this)"></i>
+                        </div>
+                    `;
+                    messagesContainer.appendChild(userMessage);
+                }
+    
+                // Show the loading spinner
+                const loadingMessage = document.createElement('div');
+                loadingMessage.classList.add('message', 'bot-message');
+                loadingMessage.innerHTML = ` 
+                    <img src="{% static 'bot.png' %}" alt="Bot">
+                    <div class="message-content">
+                        <div class="loadingio-spinner-ellipsis-nq4q5u6dq7r">
+                            <div class="ldio-x2uulkbinbj">
+                                <div></div><div></div><div></div><div></div><div></div>
+                            </div>
+                        </div>
+                    </div>
+                `;
+                if (isRetry && botMessageElement) {
+                    botMessageElement.innerHTML = loadingMessage.innerHTML;
+                } else {
+                    messagesContainer.appendChild(loadingMessage);
+                }
+    
+                fetch('/send_message/', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'X-CSRFToken': '{{ csrf_token }}'
+                    },
+                    body: JSON.stringify({ message: userMessageText, history: [] })
+                })
+                .then(response => response.json())
+                .then(data => {
+                    const botMessageContent = `
+                      <img src="{% static 'bot.png' %}" alt="Bot">
+                        <div class="message-content">
+                            <div>${data.response}</div>
+                            <div class="message-actions icon">
+                                <i class="fas fa-copy" onclick="copyMessage(this)"></i>
+                                <i class="fas fa-redo" onclick="retryMessage(this)"></i>
+                            </div>
+                        </div>
+                    `;
+                    if (isRetry && botMessageElement) {
+                        botMessageElement.innerHTML = botMessageContent;
+                    } else {
+                        const botMessage = document.createElement('div');
+                        botMessage.classList.add('message', 'bot-message');
+                        botMessage.innerHTML = botMessageContent;
+                        messagesContainer.appendChild(botMessage);
+                        messagesContainer.removeChild(loadingMessage);
+                    }
+                    messagesContainer.scrollTop = messagesContainer.scrollHeight;
+                })
+                .catch(() => {
+                    // Hide the loading spinner in case of error
+                    messagesContainer.removeChild(loadingMessage);
+                });
+    
+                if (!isRetry) {
+                    input.value = '';
+                }
+                messagesContainer.scrollTop = messagesContainer.scrollHeight;
+            }
+        }
+    
+        document.getElementById('send-button').addEventListener('click', sendMessage);
+        document.getElementById('message-input').addEventListener('keypress', function(e) {
+            if (e.key === 'Enter' && !e.shiftKey) {
+                e.preventDefault();
+                sendMessage();
+            }
+        });
+    
+        document.getElementById('darkModeSwitch').addEventListener('change', function() {
+            document.body.classList.toggle('dark-mode', this.checked);
+        });
+        function copyMessage(icon) {
+        const messageText = icon.closest('.message-content').querySelector('div').innerText;
+        navigator.clipboard.writeText(messageText).then(() => {
+            alert("Message copied to clipboard!");
+        }).catch(err => {
+            console.error('Could not copy text: ', err);
+        });
+    }
+    function editMessage(icon) {
+        const messageContent = icon.closest('.message-content-user').querySelector('div');
+        const originalMessage = messageContent.innerText;
+
+        const inputField = document.createElement('input');
+        inputField.type = 'text';
+        inputField.value = originalMessage;
+        inputField.classList.add('edit-mode');
+
+        inputField.addEventListener('blur', () => {
+            messageContent.innerText = inputField.value;
+            messageContent.classList.remove('edit-mode');
+            icon.closest('.message-content-user').replaceChild(messageContent, inputField);
+            editingMessage = icon.closest('.message.user-message');
+        });
+
+        icon.closest('.message-content-user').replaceChild(inputField, messageContent);
+        inputField.focus();
+        editingMessage = icon.closest('.message.user-message');
+    }
+        function retryMessage(icon) {
+            const botMessageElement = icon.closest('.message');
+            sendMessage(true, botMessageElement);
+        }
+        function showScrollIndicator() {
+        const indicator = document.getElementById('scroll-indicator');
+        const messagesContainer = document.getElementById('chat-messages');
+        if (messagesContainer.scrollTop < messagesContainer.scrollHeight - messagesContainer.clientHeight - 50) {
+            indicator.style.display = 'flex';
+        } else {
+            indicator.style.display = 'none';
+        }
+    }
+
+    document.getElementById('chat-messages').addEventListener('scroll', showScrollIndicator);
+        </script>
+</body>
+</html>

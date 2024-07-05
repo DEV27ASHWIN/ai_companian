@@ -1,0 +1,437 @@
+body {
+    height: 100vh;
+    display: flex;
+    background: #f5f5f5;
+    color: #333;
+    font-family: Arial, sans-serif;
+    padding: 0;
+    margin: 0;
+}
+
+.header {
+    background-color: #4a4a6a;
+    padding: 15px;
+    color: #fff;
+    text-align: center;
+    font-size: 1.5em;
+    position: relative;
+}
+
+.header h3 {
+    display: inline-block;
+    cursor: pointer;
+}
+
+#arrow {
+    cursor: pointer;
+}
+
+.toggle {
+    position: absolute;
+    top: 40px;
+    right: 40px;
+    width: 60px;
+    height: 34px;
+}
+
+.toggle input {
+    opacity: 0;
+    width: 0;
+    height: 0;
+}
+
+.toggle label {
+    position: absolute;
+    cursor: pointer;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background-color: #ccc;
+    border-radius: 34px;
+    transition: background-color 0.3s;
+}
+
+.toggle label:after {
+    content: "";
+    position: absolute;
+    width: 26px;
+    height: 26px;
+    border-radius: 50%;
+    background-color: #fff;
+    top: 4px;
+    left: 4px;
+    transition: transform 0.3s;
+}
+
+.toggle input:checked + label {
+    background-color:  #4a4a6a;
+}
+
+.toggle input:checked + label:after {
+    transform: translateX(26px);
+}
+
+/* Add styles for dark mode */
+body.dark-mode {
+    background-color: #5d5c5c;
+    color: #fff;
+    margin: 0;
+    height: 100vh;
+    display: flex;
+    font-family: Arial, sans-serif;
+}
+
+body.dark-mode .header {
+    background-color: #1c1b1b;
+    text-align: center;
+    font-size: 1.5em;
+    position: relative;
+    padding: 15px;
+}
+
+body.dark-mode .chat-header {
+    background-color: #666;
+}
+
+body.dark-mode .chat-messages {
+    background-color: #333;
+    color: #fff;
+}
+body.dark-mode .message {
+    display: flex;
+    align-items: flex-start;
+    margin-bottom: 20px;
+    max-width: 70%; /* Limit the width of the message container */
+    width: fit-content;
+}
+
+body.dark-mode .message-content {
+    max-width: 60%;
+    padding: 15px;
+    border-radius: 10px;
+    position: relative;
+    margin: 10px;
+    word-wrap: break-word;
+    
+}
+
+body.dark-mode .user-message {
+    background-color: #444;
+    color: #fff;
+}
+
+body.dark-mode .message.bot-message {
+    background-color: transparent;
+    color: #fff;
+    align-self: flex-start;
+    text-align: left;
+    border-radius: 15px ; /* Rounded corners */
+    margin-right: auto;
+    margin-top: auto;
+}
+
+body.dark-mode .chat-input {
+    background-color: #333;
+    border-top: 1px solid #444;
+}
+
+body.dark-mode .chat-input input {
+    background-color: #444;
+    color: #fff;
+    border: 1px solid #555;
+}
+
+body.dark-mode .chat-input button {
+    background-color: #4a4a6a;
+    border: none;
+    color: #fff;
+}
+
+body.dark-mode .dropdown-content {
+    background-color: #444;
+    color: #fff;
+}
+
+body.dark-mode .chat-sidebar {
+    background-color: #555; /* Darker shade for the sidebar */
+    color: #fff;
+}
+
+.chat-container {
+    display: flex;
+    flex-direction: column;
+    width: 100%;
+    height: 100%;
+}
+
+.chat-sidebar {
+    width: 300px; /* Adjust as needed */
+    background-color: #fff;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+    overflow-y: auto;
+}
+
+.bottom-container {
+    margin-top: 750px; /* Push the container to the bottom */
+    padding: 30px;
+    background-color: #e0dfdf;
+    text-align: center;
+    /* Add other styles as needed */
+}
+
+.chat-content {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    position: relative;
+}
+
+.chat-header {
+    padding: 10px;
+    color: #fff;
+    text-align: left;
+    font-size: 1.5em;
+    flex-shrink: 0;
+    background: #4a4a6a;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.chat-messages {
+    flex: 1;
+    padding: 20px;
+    overflow-y: auto;
+    background-color: #ffffff;
+    font-size: 1.2em;
+}
+
+.message {
+    display: flex;
+    align-items: flex-start;
+    margin-bottom: 20px;
+    max-width: 70%; /* Limit the width of the message container */
+    width: fit-content;
+}
+
+.message-content {
+    padding: 25px;
+    border-radius: 10px;
+    position: relative;
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+    margin: 10px;
+    word-wrap: break-word;
+}
+.message-content-user {
+    padding: 5px;
+    margin : 5px;
+}
+.message.user-message {
+    align-self: flex-start;
+    text-align: left;
+    background-color:#4a4a6a;
+    color: #f5f5f8;
+    border-radius: 15px; /* Rounded corners */
+    margin-left : auto;
+    margin-top: auto;
+    
+}
+
+.message.bot-message {
+    align-self: flex-start;
+    text-align: left;
+    background-color: transparent;
+    color: #000;
+    border-radius: 15px ; /* Rounded corners */
+    margin-right: auto;
+    margin-top: auto;
+    margin-left: 80px;
+}
+
+.chat-input {
+    background: #fff;
+    display: flex;
+    padding: 10px;
+    border-top: 1px solid #ddd;
+}
+
+.chat-input input {
+    flex: 1;
+    padding: 10px;
+    border: 1px solid #e0e0e0;
+    border-radius: 5px;
+    margin-right: 10px;
+    font-size: larger;
+}
+
+.chat-input button {
+    padding: 10px 20px;
+    border: none;
+    background-color: #333;
+    color: #fff;
+    border-radius: 5px;
+    cursor: pointer;
+    font-size: larger;
+}
+
+.dropdown-content {
+    position: absolute;
+    top: calc(10% + 10px); /* Position it below the arrow with a 10px offset */
+    left: 30; /* Align with the left side of the arrow */
+    background-color: #fff; /* Background color */
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1); /* Box shadow */
+    border-radius: 5px; /* Border radius */
+    padding: 10px; /* Padding */
+    display: none; /* Initially hidden */
+}
+
+.dropdown-content a {
+    color: black; 
+    padding: 12px 16px;
+    text-decoration: none;
+    display: block;
+}
+
+.dropdown-content a:hover {
+    background-color: #ddd;
+}
+
+.new-chat {
+    width: 40px; /* Adjust the width as needed */
+    height: auto; /* Maintain aspect ratio */
+    position: relative; /* Enable positioning */
+    top: 45px; /* Adjust the top position as needed */
+    left: 230px; /* Adjust the left position as needed */
+}
+
+.new-chat-text {
+    position: relative; /* Enable positioning */
+    top: 30px; /* Adjust the top position as needed */
+    right: 30px; /* Adjust the left position as needed */
+    color: #000000; /* Adjust the text color as needed */
+    font-size: 25px; /* Adjust the font size as needed */
+    font-weight: bold; /* Adjust the font weight as needed */
+    white-space: nowrap; /* Prevent text wrapping */
+}
+.message img {
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    margin-left: -50px;
+}
+.message-actions {
+    display: flex;
+    justify-content: flex-end;
+    margin-top: 5px;
+    gap: 10px;
+}
+
+.message-actions i {
+    margin-left: 10px;
+    cursor: pointer;
+    color: #888;
+}
+
+.message-options {
+    position: relative;
+}
+
+.message-options .options {
+    display: block;
+    position: absolute;
+    top: 100px;
+    right : 30px;
+    background-color: #dddcdc;
+    border: 1px solid #ddd;
+    border-radius: 5px;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+    padding: 5px;
+}
+
+.message-options:hover .options {
+    display: block;
+}
+
+.loadingio-spinner-ellipsis-nq4q5u6dq7r {
+    width: 100px;
+    height: 30px;
+    display: inline-block;
+    overflow: hidden;
+    background: none;
+}
+.ldio-x2uulkbinbj {
+    width: 100%;
+    height: 100%;
+    position: relative;
+    transform: translateZ(0) scale(1);
+    backface-visibility: hidden;
+    transform-origin: 0 0;
+}
+.ldio-x2uulkbinbj div {
+    position: absolute;
+    width: 10px;
+    height: 10px;
+    border-radius: 50%;
+    background: #8c19a0;
+    animation: ldio-x2uulkbinbj 1.2s cubic-bezier(0, 0.5, 0.5, 1) infinite;
+}
+.ldio-x2uulkbinbj div:nth-child(1) {
+    left: 6px;
+    animation-delay: 0s;
+}
+.ldio-x2uulkbinbj div:nth-child(2) {
+    left: 26px;
+    animation-delay: -0.1s;
+}
+.ldio-x2uulkbinbj div:nth-child(3) {
+    left: 46px;
+    animation-delay: -0.2s;
+}
+.ldio-x2uulkbinbj div:nth-child(4) {
+    left: 66px;
+    animation-delay: -0.3s;
+}
+.ldio-x2uulkbinbj div:nth-child(5) {
+    left: 86px;
+    animation-delay: -0.4s;
+}
+@keyframes ldio-x2uulkbinbj {
+    0% {
+        transform: scale(0);
+    }
+    100% {
+        transform: scale(1);
+        opacity: 0;
+    }
+}
+.icon {
+    display: flex;
+    align-items: center;
+    gap: 5px;
+}
+.icon img {
+    width: 20px;
+    height: 20px;
+    border-radius: 50%;
+}
+
+.scroll-indicator {
+    position: fixed;
+    bottom: 70px;
+    right: 20px;
+    background: rgba(0, 0, 0, 0.5);
+    color: #fff;
+    border-radius: 50%;
+    width: 40px;
+    height: 40px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    cursor: pointer;
+    display: none;
+}
+
+.scroll-indicator i {
+    font-size: 20px;
+}
